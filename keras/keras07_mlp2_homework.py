@@ -14,6 +14,7 @@ print(y.shape)
 x = x.T
 print(x.shape)
 
+#2.모델구성
 model = Sequential()
 model.add(Dense(5, input_dim=3))
 model.add(Dense(4))
@@ -21,9 +22,11 @@ model.add(Dense(3))
 model.add(Dense(2))
 model.add(Dense(1))
 
+#3.컴파일, 훈련
 model.compile(loss='mae' , optimizer='adam')
 model.fit(x, y, epochs=100, batch_size=2)
 
+#4.평가, 예측
 loss=model.evaluate(x,y)
 print('loss : ' , loss)
 
