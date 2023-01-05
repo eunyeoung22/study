@@ -35,8 +35,11 @@ model.add(Dense(200))
 model.add(Dense(1))
 
 #3.컴파일, 훈련
+import time
 model.compile(loss='mse' , optimizer='adam', metrics=['mae'])
+start = time.time()
 model.fit(x_train, y_train, epochs=3000, batch_size=500)
+end = time.time()
 
 #4.평가, 예측
 loss = model.evaluate(x_test, y_test)
@@ -58,9 +61,32 @@ def RMSE(y_test, y_predict) :
 
 print("***********************************")
 print("RMSE : ", RMSE(y_test, y_predict))
+print("걸리는 시간 : ", end - start)
 print("***********************************")
 
 r2 = r2_score(y_test, y_predict)
 print("***********************************")
 print("R2 : ", r2)
+print("걸리는 시간 : ", end - start)
 print("***********************************")
+
+
+"""
+1. CPU
+RMSE :  0.7946094173495656
+걸리는 시간 :  469.38778018951416
+
+R2 :  0.5468672671923229
+걸리는 시간 :  469.38778018951416
+
+2. GPU
+RMSE :  0.7947311636072167
+걸리는 시간 :  468.9245343208313
+
+R2 :  0.5467284028912904
+걸리는 시간 :  468.9245343208313
+
+
+
+
+"""
