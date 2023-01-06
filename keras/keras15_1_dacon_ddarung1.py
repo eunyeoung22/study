@@ -44,6 +44,7 @@ print(x_train.shape, x_test.shape)
 print(y_train.shape, y_test.shape)
 
 #2. 모델 구성
+#예비
 
 model = Sequential()
 model.add(Dense(1000, input_dim = 9))
