@@ -22,6 +22,7 @@ train_csv = train_csv.dropna() #데이터 null값 지우기
 # print(train_csv.info())
 # print(test_csv.info())
 # print(train_csv.describe())
+# print(train_csv.describe())
 
 x = train_csv.drop(['count'], axis=1)
 print(x) #[1459 rows x 9 columns]
