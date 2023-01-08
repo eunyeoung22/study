@@ -1,11 +1,11 @@
-
-
 import numpy as np
 import pandas as pd
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
+
+
 
 #1. 데이터
 path = './_data/bike/' #  데이터 위치
@@ -32,23 +32,21 @@ x_train, x_test, y_train, y_test = train_test_split(
 
 #2. 모델구성
 model = Sequential()
-model.add(Dense(100, input_dim=8, activation = 'linear'))
+model.add(Dense(100, input_dim=8, activation = 'relu'))
 model.add(Dense(100, activation = 'relu'))
-model.add(Dense(100, activation = 'linear'))
-model.add(Dense(100, activation = 'linear'))
 model.add(Dense(90, activation = 'linear'))
-model.add(Dense(80, activation = 'relu'))
+model.add(Dense(80, activation = 'linear'))
 model.add(Dense(50, activation = 'linear'))
 model.add(Dense(40, activation = 'linear'))
-model.add(Dense(10, activation = 'relu'))
+model.add(Dense(10, activation = 'linear'))
 model.add(Dense(1, activation = 'linear'))
 
 #3. 컴파일, 훈련
 import time
 model.compile(loss='mse' , optimizer='adam')
-start = time.time()
-model.fit(x_train, y_train, epochs=300, batch_size=10, validation_split=0.25)
-end = time.time()
+
+model.fit(x_train, y_train, epochs=500, batch_size=30, validation_split=0.25)
+
 
 #4. 평가, 예측
 loss = model.evaluate(x_test, y_test)
@@ -70,11 +68,13 @@ print(y_submit.shape)
 
 submission['count'] = y_submit
 print(submission)
-submission.to_csv(path + 'submission_01061214.csv')
+submission.to_csv(path + 'submission_01082105.csv')
 
 
 """
 RMSE :  168.51801356609832 #relu
 RMSE :  149.02541250872042
 RMSE :  149.10960514117627 #last
+RMSE : 12.195875452342916
+RMSE :  16.15427168435242
 """
