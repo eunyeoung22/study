@@ -33,19 +33,21 @@ x_train, x_test, y_train, y_test = train_test_split(
 #2. 모델구성
 model = Sequential()
 model.add(Dense(100, input_dim=8, activation = 'relu'))
+model.add(Dense(100, activation = 'linear'))
+model.add(Dense(100, activation = 'linear'))
 model.add(Dense(100, activation = 'relu'))
 model.add(Dense(90, activation = 'linear'))
 model.add(Dense(80, activation = 'linear'))
 model.add(Dense(50, activation = 'linear'))
 model.add(Dense(40, activation = 'linear'))
-model.add(Dense(10, activation = 'linear'))
+model.add(Dense(10, activation = 'relu')) 
 model.add(Dense(1, activation = 'linear'))
 
 #3. 컴파일, 훈련
 import time
 model.compile(loss='mse' , optimizer='adam')
 
-model.fit(x_train, y_train, epochs=500, batch_size=30, validation_split=0.25)
+model.fit(x_train, y_train, epochs=300, batch_size=10, validation_split=0.25)
 
 
 #4. 평가, 예측
@@ -56,7 +58,7 @@ y_predict = model.predict(x_test)
 print('y_predict : ' , y_predict)
 
 def RMSE(y_test, y_predict) : 
-    return np.sqrt(mean_squared_error(y_test, y_predict))
+    return np.sqrt(mean_squared_error(y_test, y_predict))**0.5
 
 print("***********************************")
 print("RMSE : ", RMSE(y_test, y_predict))
@@ -68,7 +70,7 @@ print(y_submit.shape)
 
 submission['count'] = y_submit
 print(submission)
-submission.to_csv(path + 'submission_01082105.csv')
+submission.to_csv(path + 'submission_01082152.csv')
 
 
 """
@@ -77,4 +79,6 @@ RMSE :  149.02541250872042
 RMSE :  149.10960514117627 #last
 RMSE : 12.195875452342916
 RMSE :  16.15427168435242
+RMSE :  12.336959716845895
+RMSE :  12.404882025716235
 """
