@@ -1,5 +1,4 @@
 
-
 import numpy as np
 import pandas as pd
 from tensorflow.keras.models import Sequential
@@ -47,7 +46,7 @@ model.add(Dense(1, activation = 'linear'))
 import time
 model.compile(loss='mse' , optimizer='adam')
 start = time.time()
-model.fit(x_train, y_train, epochs=300, batch_size=10, validation_split=0.25)
+model.fit(x_train, y_train, epochs=1500, batch_size=10, validation_split=0.25)
 end = time.time()
 
 #4. 평가, 예측
@@ -58,7 +57,7 @@ y_predict = model.predict(x_test)
 print('y_predict : ' , y_predict)
 
 def RMSE(y_test, y_predict) : 
-    return np.sqrt(mean_squared_error(y_test, y_predict))
+    return np.sqrt(mean_squared_error(y_test, y_predict))**0.5
 
 print("***********************************")
 print("RMSE : ", RMSE(y_test, y_predict))
@@ -70,11 +69,12 @@ print(y_submit.shape)
 
 submission['count'] = y_submit
 print(submission)
-submission.to_csv(path + 'submission_01061214.csv')
+submission.to_csv(path + 'submission_01090931.csv')
 
 
 """
 RMSE :  168.51801356609832 #relu
 RMSE :  149.02541250872042
 RMSE :  149.10960514117627 #last
+RMSE :  150.33808468361812
 """
