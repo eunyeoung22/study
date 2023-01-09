@@ -46,19 +46,27 @@ print(y_train.shape, y_test.shape)
 #2. 모델 구성
 
 model = Sequential()
-model.add(Dense(1000, input_dim = 9, activation= 'sigmoid'))
-model.add(Dense(90, activation= 'sigmoid'))
+model.add(Dense(100, input_dim = 9, activation= 'linear'))
+model.add(Dense(100, activation= 'linear'))
+model.add(Dense(100, activation= 'linear'))
+model.add(Dense(100, activation= 'linear'))
+model.add(Dense(100, activation= 'linear'))
+model.add(Dense(100, activation= 'linear'))
+model.add(Dense(100, activation= 'linear'))
+model.add(Dense(100, activation= 'linear'))
+model.add(Dense(90, activation= 'linear'))
+model.add(Dense(90, activation= 'linear'))
 model.add(Dense(80, activation= 'linear'))
 model.add(Dense(50, activation= 'linear'))
 model.add(Dense(40, activation= 'linear'))
 model.add(Dense(30, activation= 'linear'))
-model.add(Dense(20, activation= 'linear'))
+model.add(Dense(20, activation= 'relu'))
 model.add(Dense(1, activation= 'linear'))
 
 #3. 컴파일, 훈련
 import time
 model.compile(loss='mse' , optimizer='adam', metrics='mae')
-model.fit(x_train, y_train, epochs=100, batch_size=1)
+model.fit(x_train, y_train, epochs=3000, batch_size=32)
 
 #4. 평가, 예측
 loss = model.evaluate(x_test, y_test)
@@ -69,7 +77,7 @@ print('y_predict : ', y_predict)
 
 
 def RMSE(y_test, y_predict) : 
-    return np.sqrt(mean_squared_error(y_test, y_predict))
+    return np.sqrt(mean_squared_error(y_test, y_predict))**0.5
 
 print("***********************************")
 print("RMSE : ", RMSE(y_test, y_predict))
@@ -90,18 +98,22 @@ RMSE :  48.99774291529566
 RMSE :  48.538199343440056
 RMSE :  52.696013567460675
 RMSE :  52.86050457047641
+
+RMSE :  6.710892132992797
+RMSE :  6.7738770247319975
+RMSE :  6.6367089907016865
 """
 
 # .to_csv()를 사용하여 
 # submission_0105.csv를 완성하시오.
-# y_submit = model.predict(test_csv)
-# print(y_submit)
-# print(y_submit.shape) #(715, 1)
+y_submit = model.predict(test_csv)
+print(y_submit)
+print(y_submit.shape) #(715, 1)
 
-# submission['count'] = y_submit
-# print(submission)
+submission['count'] = y_submit
+print(submission)
 
-# submission.to_csv(path + 'submission_01050326.csv')
+submission.to_csv(path + 'submission_01091040.csv')
 
 
 
