@@ -30,11 +30,11 @@ model.add(Dense(1, activation= 'sigmoid')) # 이진분류에선 꼭 마지막에
 
 #3. 컴파일, 훈련
 model.compile(loss = 'binary_crossentropy', optimizer= 'adam', metrics=['accuracy']) # 이진분류에선 꼭 이 훈련 쓰기
-from tensorflow.keras.callbacks import EarlyStopping
+from tensorflow.keras.callbacks import EarlyStopping # 
 earlyStopping = EarlyStopping(monitor= 'val_loss' ,
                               mode='min',
                               patience = 10, 
-                              restore_best_weights=True,
+                              restore_best_weights=True, # patience 10번 중 마지막 최소값이 아닌 그중 제일 최소값 반환
                               verbose=1
                               )
 model.fit(x_train, y_train, epochs=10000, batch_size= 15,
