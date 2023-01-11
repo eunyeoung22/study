@@ -16,18 +16,60 @@ y = datasets['target']
 # print(np.unique(y, return_counts=True))
 # # #(array([1, 2, 3, 4, 5, 6, 7])
 # # #array[211840, 283301,  35754,   2747,   9493,  17367,  20510]
-import pandas as pd
-from sklearn.preprocessing import OneHotEncoder
 
-# Initialize the OneHotEncoder
-ohe = OneHotEncoder()
+##############################1.케라스 투 카테고리컬###################################
+# from tensorflow.keras.utils import to_categorical
+# y = to_categorical(y)
+# # print(y.shape) #(581012, 8)
+# # print(type(y))# y컬럼 타입이 무엇인지 :  class 'numpy.ndarray'
+# # print(y[:10])# y 9번째 컬럼까지 출력
+# # print(np.unique(y[:,0], return_counts=True)) #0번째 컬럼이 뭐가 있는지 확인
+# # print(np.unique(y[:,1], return_counts=True)) #1번째 컬럼이 뭐가 있는지 확인
+# y = np.delete(y, 0, axis=1) # 0번째 열 삭제
+# print(y.shape)
+# print(np.unique(y[:,0], return_counts=True)) #return_counts=True 컬럼갯수 카운트
 
-# Fit the OneHotEncoder on the target variable 'y'
-y = ohe.fit_transform(y.reshape(-1,1)).toarray()
+##############################2.판다스 겟 더미스###########################################
 
-# Print the new shape of the target variable 'y'
+# 1)첫번째 방법
+# import pandas as pd
+# y = pd.get_dummies(y)
+# print(y[:10])
+# y = y.to_numpy()
+# print(type(y))
+
+# 2)두번째 방법
+# y= pd.get_dummies(y, drop_first=False)
+# y = y.values # 둘중 하나 쓰기 '.values  또는 .to numpy()'
+# y = np.array(y)
+# print(y.shape)
+
+#########################3.sklearn OneHotEncoder  ################################
+1. 첫번째
+
+print(y.shape) # (581012,0)
+y = y.reshape(581012,1) # reshape 시 안의 내용은 바뀌지 않는다
 print(y.shape)
-print(x.shape)
+from sklearn.preprocessing import OneHotEncoder
+ohe = OneHotEncoder() #원핫인코딩 정의
+# ohe.fit(y)
+# y = ohe.transform(y)
+y = ohe.fit_transform(y) #위 두개 명령어를 합침
+print(type(y)) # class 'scipy.sparse._csr.csr_matrix' 형태
+y = y.toarray() # class 'numpy.ndarray' 로 변경
+print(type(y)) # 타입변경 확인
+
+
+
+# 2. 두번째
+#from sklearn.preprocessing import OneHotEncoder
+# Initialize the OneHotEncoder
+# ohe = OneHotEncoder()
+# y = ohe.fit_transform(y.reshape(-1,1)).toarray()
+# # Fit the OneHotEncoder on the target variable 'y'
+# # Print the new shape of the target variable 'y'
+# print(y.shape)
+# print(x.shape)
 
 
 x_train, x_test, y_train, y_test = train_test_split(
@@ -67,14 +109,15 @@ print('accuracy : ', accuracy)
 
 from sklearn.metrics import accuracy_score
 y_predict = model.predict(x_test)
-y_predict = np.argmax(y_predict, axis=0)
+y_predict = np.argmax(y_predict, axis=1)
 print(y_predict)
-y_test = np.argmax(y_test, axis=0)
-print(y_test)
-# acc = accuracy_score(y_test, y_predict)
-# print(acc)
+# y_test = np.argmax(y_test, axis=1) #numpy 자료형이 pandas를 못받아 들임
+# print(y_test)
+acc = accuracy_score(y_test, y_predict)
+print(acc)
 
 """
 loss:  0.664304256439209
 accuracy :  0.7103431224822998
 """
+
