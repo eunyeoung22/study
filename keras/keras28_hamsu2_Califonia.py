@@ -1,0 +1,112 @@
+
+import numpy as np
+from tensorflow.keras.models import Sequential, Model
+from tensorflow.keras.layers import Dense, Input
+from sklearn.model_selection import train_test_split
+from sklearn.datasets import fetch_california_housing
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import StandardScaler
+
+#1. 데이터
+datasets= fetch_california_housing()
+x = datasets.data
+y = datasets.target
+
+
+x_train, x_test, y_train, y_test = train_test_split(x,y,
+    train_size=0.9, shuffle=True, random_state=123
+)
+
+# scaler = MinMaxScaler()
+# # scaler = StandardScaler()
+# scaler.fit(x_train)
+# x_train = scaler.transform(x_train)
+# # x_train = scaler.fit_transform(x_train)
+# x_test = scaler.transform(x_test)
+
+# 2. 모델 구성(순차형)
+# model = Sequential()
+# model.add(Dense(500, input_dim=8, activation= 'relu'))
+# model.add(Dense(100, activation= 'linear'))
+# model.add(Dense(100, activation= 'linear'))
+# model.add(Dense(500, activation= 'linear'))
+# model.add(Dense(100, activation= 'linear'))
+# model.add(Dense(100, activation= 'linear'))
+# model.add(Dense(100, activation= 'linear'))
+# model.add(Dense(100, activation= 'linear'))
+# model.add(Dense(100, activation= 'linear'))
+# model.add(Dense(50, activation= 'linear'))
+# model.add(Dense(1, activation= 'linear'))
+# model.summary()
+# # Total params: 210,801
+# # Trainable params: 210,801
+# # Non-trainable params: 0
+
+# 2. 모델 구성(함수형)
+input1 = Input(shape=(8,))
+dence1 = Dense(500, activation= 'relu')(input1)
+dence2 = Dense(100, activation= 'linear')(dence1)
+dence3 = Dense(100, activation= 'linear')(dence2)
+dence4 = Dense(500, activation= 'linear')(dence3)
+dence5 = Dense(100, activation= 'linear')(dence4)
+dence6 = Dense(100, activation= 'linear')(dence5)
+dence7 = Dense(100, activation= 'linear')(dence6)
+dence8 = Dense(100, activation= 'linear')(dence7)
+dence9 = Dense(100, activation= 'linear')(dence8)
+dence10 = Dense(50, activation= 'linear')(dence9)
+output1 = Dense(1, activation= 'linear')(dence10)
+model1 = Model(inputs = input1, outputs = output1)
+model1.summary()
+# Total params: 210,801
+# Trainable params: 210,801
+# Non-trainable params: 0
+
+#3.컴파일, 훈련
+import time
+model1.compile(loss='mse' , optimizer='adam', metrics=['mae'])
+hist = model1.fit(x_train, y_train, epochs=100, batch_size=50)
+
+
+#4.평가, 예측
+loss = model1.evaluate(x_test, y_test)
+print('loss : ', loss)
+
+
+y_predict = model1.predict(x_test)
+
+
+from sklearn.metrics import mean_squared_error, r2_score
+def RMSE(y_test, y_predict) : 
+    return np.sqrt(mean_squared_error(y_test, y_predict))
+
+print("***********************************")
+print("RMSE : ", RMSE(y_test, y_predict))
+print("***********************************")
+
+r2 = r2_score(y_test, y_predict)
+print("***********************************")
+print("R2 : ", r2)
+print("***********************************")
+
+
+# import matplotlib.pyplot as plt
+# plt.figure(figsize=(9,6)) #그래프 사이즈
+# plt.plot(hist.history['loss'], c = 'red', marker = '.', 
+#         label='loss') # c : 그래프 선 color / label : 그래프 선 이름
+
+# plt.grid() #격자
+# plt.xlabel('epochs') #x축
+# plt.ylabel('loss') #y축
+# plt.title('califonia loss') # 그래프 타이틀
+# plt.legend() # 범례(알아서 빈곳에 현출)
+# # plt.legend(loc='upper right') #범례(그래프 오른쪽)
+# # plt.legend(loc='upper left') #범례(그래프 왼쪽)
+# plt.show() # 그래프 보여줘
+
+"""
+RMSE :  0.7501634420961806
+***********************************
+***********************************
+R2 :  0.596140957593686
+***********************************
+"""
