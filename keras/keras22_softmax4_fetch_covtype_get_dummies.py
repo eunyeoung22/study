@@ -17,14 +17,15 @@ y = datasets['target']
 # # #(array([1, 2, 3, 4, 5, 6, 7])
 # # #array[211840, 283301,  35754,   2747,   9493,  17367,  20510]
 #=========================================================
-#1. 첫번째 찾은 값
+# #1. 첫번째 찾은 값(get_dummies)
 # import pandas as pd
 # y= pd.get_dummies(y, dummy_na=False)
+# y = np.array(y)
 # print(y.values)
 # print(y.shape)
 # print(x.shape)
 #=========================================================
-#2. 두번째 찾은 값
+#2. 두번째 찾은 값(get_dummies)
 # import pandas as pd
 # y= pd.get_dummies(y)
 # y_np = y.values()
@@ -32,14 +33,20 @@ y = datasets['target']
 # print(y.shape)
 # print(x.shape)
 #=========================================================
-#3. 세번째 찾은 값
-import pandas as pd
-y= pd.get_dummies(y)
-y_np = y.to_numpy()
-print(y.values)
-print(y.shape)
-print(x.shape)
+#3. 세번째 찾은 값(get_dummies)
+# import pandas as pd
+# y= pd.get_dummies(y)
+# y_np = y.to_numpy()
+# print(y.values)
+# print(y.shape)
+# print(x.shape)
 #=========================================================
+#4. 네번째 찾은 값(get_dummies)
+import pandas as pd
+y= pd.get_dummies(y, drop_first=False)
+y = np.array(y)
+print(y.shape)
+
 
 x_train, x_test, y_train, y_test = train_test_split(
                 x, y, shuffle=True,
@@ -49,13 +56,13 @@ x_train, x_test, y_train, y_test = train_test_split(
 )
 #2. 모델 구성
 model = Sequential()
-model.add(Dense(10, activation='linear', input_shape = (54,)))
+model.add(Dense(10, activation='relu', input_shape = (54,)))
 model.add(Dense(100, activation='linear'))
 model.add(Dense(100, activation='linear'))
 model.add(Dense(100, activation='linear'))
 model.add(Dense(100, activation='linear'))
 model.add(Dense(100, activation='linear'))
-model.add(Dense(100, activation='linear'))
+model.add(Dense(100, activation='sigmoid'))
 model.add(Dense(50, activation='linear'))
 model.add(Dense(7, activation='softmax'))
 
@@ -65,9 +72,9 @@ model.compile(loss = 'categorical_crossentropy', optimizer='adam',
 from tensorflow.keras.callbacks import EarlyStopping
 earlyStopping = EarlyStopping(monitor= 'val_accuracy',
                               mode='max',
-                              patience=5,
+                              patience=50,
                               verbose=2)
-model.fit(x_train, y_train, epochs=10, batch_size=32,
+model.fit(x_train, y_train, epochs=100, batch_size=32,
           callbacks=[earlyStopping],validation_split=0.2, verbose=1)
 
 #4. 평가, 예측
