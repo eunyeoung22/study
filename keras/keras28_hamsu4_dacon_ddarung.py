@@ -26,7 +26,7 @@ submission = pd.read_csv(path + 'submission.csv', index_col=0)
 # print(train_csv.info())
 # print(test_csv.info())
 # print(train_csv.describe())
-print(submission.shape) #(715, 1)
+# print(submission.shape) #(715, 1)
 
 
 ## 결측치 처리 1. 제거 ##
@@ -42,14 +42,14 @@ print(y.shape) #(1328,)
 
 
 x_train, x_test, y_train, y_test = train_test_split(x, y,
-    train_size=0.9, shuffle=True, random_state=123
+    train_size=0.7, shuffle=True, random_state=123
 )
 
 # print(x_train.shape, x_test.shape)
 # print(y_train.shape, y_test.shape)
 
-# scaler = MinMaxScaler()
-scaler = StandardScaler()
+scaler = MinMaxScaler()
+# scaler = StandardScaler()
 scaler.fit(x_train)
 x_train = scaler.transform(x_train)
 # x_train = scaler.fit_transform(x_train)
@@ -86,7 +86,7 @@ test_csv = scaler.transform(test_csv)
 
 # 2. 모델 구성(함수형)
 input1 = Input(shape=(9,))
-dence1 = Dense(100, activation= 'linear')(input1)
+dence1 = Dense(100, activation= 'relu')(input1)
 dence2 = Dense(100, activation= 'linear')(dence1)
 dence3 = Dense(100, activation= 'linear')(dence2)
 dence4 = Dense(100, activation= 'linear')(dence3)
@@ -100,21 +100,22 @@ dence11 = Dense(80, activation= 'linear')(dence10)
 dence12 = Dense(50, activation= 'linear')(dence11)
 dence13 = Dense(40, activation= 'linear')(dence12)
 dence14 = Dense(30, activation= 'linear')(dence13)
-dence15 = Dense(20, activation= 'linear')(dence14)
+dence15 = Dense(20, activation= 'relu')(dence14)
 output1 = Dense(1, activation= 'linear')(dence15)
 model1 = Model(inputs = input1, outputs = output1)
-model1.summary()
+path = './_save/'
+model1.save(path + 'dacon_ddarung.h5')
+# model1.summary()
 # Total params: 104,221
 # Trainable params: 104,221
 # Non-trainable params: 0
 
 #3. 컴파일, 훈련
-import time
 model1.compile(loss='mse' , optimizer='adam', metrics='mae')
 from tensorflow.keras.callbacks import EarlyStopping
 earlyStopping = EarlyStopping(monitor = 'val_loss',
                               mode = 'min',
-                              patience = 300,
+                              patience = 350,
                               restore_best_weights=True)
 hist = model1.fit(x_train, y_train, epochs=3000, batch_size=32, validation_split=0.2,
                 callbacks=[earlyStopping], verbose=2)
@@ -154,17 +155,20 @@ print("***********************************")
 # .to_csv()를 사용하여 
 # submission_0105.csv를 완성하시오.
 y_submit = model1.predict(test_csv)
-# print(y_submit)
-# print(y_submit.shape) #(715, 1)
+# # print(y_submit)
+# # print(y_submit.shape) #(715, 1)
 
 submission['count'] = y_submit
-# print(submission)
+# # print(submission)
 
-submission.to_csv(path + 'submission_01111956.csv')
+submission.to_csv(path + 'submission_011121008.csv')
 
 
 
 """
 RMSE :  48.92284822242941
+RMSE :  46.90667715501679
+RMSE :  44.633226108402596
+RMSE :  41.62380023958481
 """
 
