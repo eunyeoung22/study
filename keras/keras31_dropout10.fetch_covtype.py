@@ -93,57 +93,75 @@ x_test = scaler.transform(x_test)
 # print('최대값 : ',np.max(x))
 
 #2. 모델 구성(순차형)
-# model = Sequential()
-# model.add(Dense(10, activation='linear', input_shape = (54,)))
-# model.add(Dense(100, activation='linear'))
-# model.add(Dense(100, activation='linear'))
-# model.add(Dense(100, activation='linear'))
-# model.add(Dense(100, activation='linear'))
-# model.add(Dense(100, activation='linear'))
-# model.add(Dense(100, activation='linear'))
-# model.add(Dense(50, activation='linear'))
-# model.add(Dense(7, activation='softmax'))
+model = Sequential()
+model.add(Dense(10, activation='linear', input_shape = (54,)))
+model.add(Dropout(0.2))
+model.add(Dense(100, activation='linear'))
+model.add(Dense(100, activation='linear'))
+model.add(Dense(100, activation='linear'))
+model.add(Dropout(0.2))
+model.add(Dense(100, activation='linear'))
+model.add(Dense(100, activation='linear'))
+model.add(Dense(100, activation='linear'))
+model.add(Dropout(0.2))
+model.add(Dense(50, activation='linear'))
+model.add(Dense(7, activation='softmax'))
 # model.summary()
 # # Total params: 57,557
 # # Trainable params: 57,557
 # # Non-trainable params: 0
 
-# 2. 모델 구성(함수형)
-input1 = Input(shape=(54,))
-dence1 = Dense(10, activation= 'linear')(input1)
-dence2 = Dense(100, activation= 'sigmoid')(dence1)
-dence3 = Dense(100, activation= 'linear')(dence2)
-dence4 = Dense(100, activation= 'linear')(dence3)
-dence5 = Dense(100, activation= 'linear')(dence4)
-dence6 = Dense(100, activation= 'linear')(dence5)
-dence7 = Dense(100, activation= 'linear')(dence6)
-dence8 = Dense(50, activation= 'linear')(dence7)
-output1 = Dense(7, activation= 'softmax')(dence8)
-model1 = Model(inputs = input1, outputs = output1)
-model1.summary()
+# # 2. 모델 구성(함수형)
+# input1 = Input(shape=(54,))
+# dence1 = Dense(10, activation= 'linear')(input1)
+# dence2 = Dense(100, activation= 'sigmoid')(dence1)
+# dence3 = Dense(100, activation= 'linear')(dence2)
+# dence4 = Dense(100, activation= 'linear')(dence3)
+# dence5 = Dense(100, activation= 'linear')(dence4)
+# dence6 = Dense(100, activation= 'linear')(dence5)
+# dence7 = Dense(100, activation= 'linear')(dence6)
+# dence8 = Dense(50, activation= 'linear')(dence7)
+# output1 = Dense(7, activation= 'softmax')(dence8)
+# model = Model(inputs = input1, outputs = output1)
+# model.summary()
 # Total params: 57,557
 # Trainable params: 57,557
 # Non-trainable params: 0
 
 #3. 컴파일, 훈련
-model1.compile(loss = 'categorical_crossentropy', optimizer='adam',
+model.compile(loss = 'categorical_crossentropy', optimizer='adam',
               metrics=['accuracy'])
-from tensorflow.keras.callbacks import EarlyStopping
-earlyStopping = EarlyStopping(monitor= 'val_accuracy',
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+es = EarlyStopping(monitor= 'val_accuracy',
                               mode='max',
                               patience=100,
                               verbose=2)
-model1.fit(x_train, y_train, epochs=100, batch_size=32,
-          callbacks=[earlyStopping],validation_split=0.2, verbose=1)
+import datetime
+date = datetime.datetime.now()
+print(date) #2023-01-12 14:57:51.908060
+print(type(date)) #class 'datetime.datetime' 
+date = date.strftime("%m%d_%H%M") #0112_1502 ->스트링 문자열 형식으로 바꿔주기
+print(date)
+print(type(date)) #<class 'str'>->스트링 문자열 형태임 
+
+filepath = './_save/MCP/'
+filename = '{epoch:04d}-{val_loss:.4f}.hdf5' # epoch는 정수 4자리까지 val_loss는 소수점 4자리 이하까지 .hdf5 파일 만들기
+
+mcp = ModelCheckpoint(monitor='val_loss', mode='auto', verbose=1,
+                      save_best_only=True, #가장 좋은 지점을 저장
+                      filepath= filepath +'k31_10_'+ '_' + date + '_' + filename) #파일 저장 경로 지정                
+                    #   filepath= path +'MCP/keras30_ModelCheckPoint13.hdf5') #파일 저장 경로 지정
+model.fit(x_train, y_train, epochs=100, batch_size=32,
+          callbacks=[es, mcp],validation_split=0.2, verbose=1)
 
 #4. 평가, 예측
-loss, accuracy = model1.evaluate(x_test, y_test)
+loss, accuracy = model.evaluate(x_test, y_test)
 print('loss: ', loss)
 print('accuracy : ', accuracy)
 
 
 from sklearn.metrics import accuracy_score
-y_predict = model1.predict(x_test)
+y_predict = model.predict(x_test)
 y_predict = np.argmax(y_predict, axis=1)
 print(y_predict)
 y_test = np.argmax(y_test, axis=1) #numpy 자료형이 pandas를 못받아 들임
