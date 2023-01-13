@@ -63,33 +63,57 @@ test_csv = scaler.transform(test_csv)
 # 2. 모델 구성(함수형)
 input1 = Input(shape=(8,))
 dence1 = Dense(100, activation= 'linear')(input1)
-dence2 = Dense(100, activation= 'linear')(dence1)
+drop1 = Dropout(0.5)(dence1)
+dence2 = Dense(100, activation= 'linear')(drop1)
 dence3 = Dense(100, activation= 'linear')(dence2)
 dence4 = Dense(100, activation= 'linear')(dence3)
 dence5 = Dense(90, activation= 'linear')(dence4)
-dence6 = Dense(80, activation= 'linear')(dence5)
+drop5 = Dropout(0.3)(dence5)
+dence6 = Dense(80, activation= 'linear')(drop5)
 dence7 = Dense(50, activation= 'linear')(dence6)
 dence8 = Dense(40, activation= 'linear')(dence7)
 dence9 = Dense(10, activation= 'relu')(dence8)
-output1 = Dense(1, activation= 'linear')(dence9)
-model1 = Model(inputs = input1, outputs = output1)
-model1.summary()
+drop9 = Dropout(0.2)(dence9)
+output1 = Dense(1, activation= 'linear')(drop9)
+model = Model(inputs = input1, outputs = output1)
+model.summary()
 # Total params: 54,081
 # Trainable params: 54,081
 # Non-trainable params: 0
 
 
 #3. 컴파일, 훈련
-model1.compile(loss='mse' , optimizer='adam')
+model.compile(loss='mse' , optimizer='adam')
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+es = EarlyStopping(monitor = 'val_loss',
+                              mode = 'min',
+                              patience = 350,
+                              restore_best_weights=True,
+                              verbose=1)
+import datetime
+date = datetime.datetime.now()
+print(date) #2023-01-12 14:57:51.908060
+print(type(date)) #class 'datetime.datetime' 
+date = date.strftime("%m%d_%H%M") #0112_1502 ->스트링 문자열 형식으로 바꿔주기
+print(date)
+print(type(date)) #<class 'str'>->스트링 문자열 형태임 
 
-hist = model1.fit(x_train, y_train, epochs=300, batch_size=32, validation_split=0.25)
+filepath = './_save/MCP/'
+filename = '{epoch:04d}-{val_loss:.4f}.hdf5' # epoch는 정수 4자리까지 val_loss는 소수점 4자리 이하까지 .hdf5 파일 만들기
+
+mcp = ModelCheckpoint(monitor='val_loss', mode='auto', verbose=1,
+                      save_best_only=True, #가장 좋은 지점을 저장
+                      filepath= filepath +'k31_05_'+ '_' + date + '_' + filename) #파일 저장 경로 지정                
+                    #   filepath= path +'MCP/keras30_ModelCheckPoint13.hdf5') #파일 저장 경로 지정
+model.fit(x_train, y_train, epochs=3000, batch_size=32, validation_split=0.2,
+                callbacks=[es, mcp], verbose=1)
 
 
 #4. 평가, 예측
-loss = model1.evaluate(x_test, y_test)
+loss = model.evaluate(x_test, y_test)
 print('loss : ', loss)
 
-y_predict = model1.predict(x_test)
+y_predict = model.predict(x_test)
 print('y_predict : ' , y_predict)
 
 def RMSE(y_test, y_predict) : 
@@ -116,16 +140,19 @@ print("***********************************")
 # # plt.legend(loc='upper left') #범례(그래프 왼쪽)
 # plt.show() # 그래프 보여줘
 
-y_submit = model1.predict(test_csv)
+y_submit = model.predict(test_csv)
 print(y_submit)
 print(y_submit.shape)
 
 submission['count'] = y_submit
 print(submission)
-submission.to_csv(path + 'submission_0112000.csv')
+submission.to_csv(path + 'submission_01130213.csv')
 
 
 """
 RMSE :  154.47338779305323
 RMSE :  152.27039138022755
+
+적용후
+RMSE :  153.80548813233713
 """
