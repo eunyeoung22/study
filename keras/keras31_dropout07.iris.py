@@ -62,26 +62,50 @@ dence1 = Dense(50, activation= 'relu')(input1)
 dence2 = Dense(40, activation= 'sigmoid')(dence1)
 dence3 = Dense(30, activation= 'linear')(dence2)
 dence4 = Dense(20, activation= 'relu')(dence3)
-dence5 = Dense(30, activation= 'linear')(dence4)
+drop4 = Dropout(0.3)(dence4)
+dence5 = Dense(30, activation= 'linear')(drop4)
 dence6 = Dense(30, activation= 'relu')(dence5)
 dence7 = Dense(30, activation= 'linear')(dence6)
 dence8 = Dense(30, activation= 'linear')(dence7)
-dence9 = Dense(30, activation= 'sigmoid')(dence8)
+drop8 = Dropout(0.3)(dence8)
+dence9 = Dense(30, activation= 'sigmoid')(drop8)
 output1 = Dense(3, activation= 'softmax')(dence9)
-model1 = Model(inputs = input1, outputs = output1)
-model1.summary()
+model = Model(inputs = input1, outputs = output1)
+model.summary()
 # Total params: 8,583
 # Trainable params: 8,583
 # Non-trainable params: 0
 
 #3. 컴파일, 훈련
-model1.compile(loss='categorical_crossentropy', optimizer='adam',
+model.compile(loss='categorical_crossentropy', optimizer='adam',
               metrics=['accuracy'])
-model1.fit(x_train, y_train, epochs=50, batch_size=1,
-         validation_split=0.2,
-         verbose=1)
+
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint 
+es = EarlyStopping(monitor= 'val_loss' ,
+                              mode='min',
+                              patience = 300, 
+                              restore_best_weights=True, # patience 10번 중 마지막 최소값이 아닌 그중 제일 최소값 반환
+                              verbose=1
+                              )
+import datetime
+date = datetime.datetime.now()
+print(date) #2023-01-12 14:57:51.908060
+print(type(date)) #class 'datetime.datetime' 
+date = date.strftime("%m%d_%H%M") #0112_1502 ->스트링 문자열 형식으로 바꿔주기
+print(date)
+print(type(date)) #<class 'str'>->스트링 문자열 형태임 
+
+filepath = './_save/MCP/'
+filename = '{epoch:04d}-{val_loss:.4f}.hdf5' # epoch는 정수 4자리까지 val_loss는 소수점 4자리 이하까지 .hdf5 파일 만들기
+
+mcp = ModelCheckpoint(monitor='val_loss', mode='auto', verbose=1,
+                      save_best_only=True, #가장 좋은 지점을 저장
+                      filepath= filepath +'k31_05_'+ '_' + date + '_' + filename) #파일 저장 경로 지정                
+                    #   filepath= path +'MCP/keras30_ModelCheckPoint13.hdf5') #파일 저장 경로 지정
+model.fit(x_train, y_train, epochs=50, batch_size=1, validation_split=0.2,
+                callbacks=[es, mcp], verbose=1)
 #4. 평가, 예측
-loss, accuracy = model1.evaluate(x_test, y_test)
+loss, accuracy = model.evaluate(x_test, y_test)
 print('loss: ', loss)
 print('accuracy : ', accuracy)
 
@@ -91,7 +115,7 @@ print('accuracy : ', accuracy)
 
 from sklearn.metrics import accuracy_score
 import numpy as np
-y_predict = model1.predict(x_test)
+y_predict = model.predict(x_test)
 y_predict = np.argmax(y_predict, axis=1)
 print(y_predict)
 y_test = np.argmax(y_test, axis=1)
@@ -106,4 +130,8 @@ accuracy :  0.8666666746139526
 [1 2 0 0 2 2 0 2 0 2 2 2 0 1 0 1 2 2 2 1 2 0 0 1 0 0 1 1 2 1]
 [1 2 0 0 2 2 0 1 0 2 2 1 0 1 0 1 2 2 2 2 2 0 0 1 0 0 1 1 1 1]
 0.8666666666666667
+
+drop
+loss:  0.3513701260089874
+accuracy :  0.8999999761581421
 """
