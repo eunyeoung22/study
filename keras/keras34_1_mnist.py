@@ -24,8 +24,13 @@ model.add(Conv2D(filters=128, kernel_size=(2,2), input_shape = (28,28,1),
 model.add(Conv2D(filters=64, kernel_size=(2,2)))# (26,26,64)
 model.add(Conv2D(filters=64, kernel_size=(2,2))) # (25,25,64)
 model.add(Flatten()) #->40000
-model.add(Dense(32, activation='relu')) #input_shape(400000, )
+print(x_train.shape, y_train.shape)
+print(x_test.shape, y_test.shape)
+model.add(Dense(50, activation='relu')) #input_shape(400000, )
                #(6만 4만)이 인풋이야   (batch_size, input_dim)
+model.add(Dense(40, activation='relu')) 
+model.add(Dense(30, activation='linear')) 
+model.add(Dense(20, activation='linear')) 
 model.add(Dense(10, activation='softmax'))
 
 #3. 컴파일, 훈련
