@@ -30,6 +30,8 @@ model.add(Dense(100, activation='relu'))
 model.add(Dense(100, activation='relu'))
 model.add(Dense(100, activation='relu'))
 model.add(Dense(100, activation='relu'))
+model.add(Dense(100, activation='relu'))
+model.add(Dense(100, activation='relu'))
 model.add(Dense(10, activation='softmax'))
 
 #3. 컴파일, 훈련
@@ -38,7 +40,7 @@ model.compile(loss ='sparse_categorical_crossentropy', optimizer='adam',
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 es = EarlyStopping(monitor='val_loss',
                    mode='min',
-                   patience=50,
+                   patience=150,
                    verbose=1)
 
 import datetime
@@ -56,7 +58,7 @@ mcp = ModelCheckpoint(monitor='val_loss', mode='auto', verbose=1,
                       save_best_only=True, 
                       filepath= filepath +'k34_2_'+ '_' + date + '_' + filename)               
                     #   filepath= path +'MCP/keras30_ModelCheckPoint13.hdf5') #파일 저장 경로 지정
-model.fit(x_train, y_train, epochs= 10, verbose=1, batch_size=500, validation_split=0.2,
+model.fit(x_train, y_train, epochs= 300, verbose=1, batch_size=100, validation_split=0.2,
           callbacks=[es, mcp])
 
 #4. 평가, 예측
@@ -76,4 +78,10 @@ acc :  0.5126000046730042
 
 loss :  1.1182035207748413
 acc :  0.6129000186920166
+
+loss :  1.169961929321289
+acc :  0.607200026512146
+
+loss :  2.8691251277923584
+acc :  0.6071000099182129
 """
