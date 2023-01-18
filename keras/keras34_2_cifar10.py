@@ -31,7 +31,7 @@ model.add(Dense(100, activation='relu'))
 model.add(Dense(100, activation='relu'))
 model.add(Dense(100, activation='relu'))
 model.add(Dense(100, activation='relu'))
-model.add(Dense(100, activation='relu'))
+model.add(Dense(100, activation='linear'))
 model.add(Dense(10, activation='softmax'))
 
 #3. 컴파일, 훈련
