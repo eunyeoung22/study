@@ -31,6 +31,9 @@ model.add(Dense(50, activation='relu')) #input_shape(400000, )
 model.add(Dense(40, activation='relu')) 
 model.add(Dense(30, activation='linear')) 
 model.add(Dense(20, activation='linear')) 
+model.add(Dense(20, activation='linear')) 
+model.add(Dense(20, activation='linear')) 
+model.add(Dense(20, activation='linear')) 
 model.add(Dense(10, activation='softmax'))
 
 #3. 컴파일, 훈련
