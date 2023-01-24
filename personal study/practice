@@ -3,6 +3,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from sklearn.model_selection import train_test_split
 from sklearn.datasets import fetch_california_housing
+from sklearn.preprocessing import MinMaxScaler
 
 #1. 데이터
 datasets = fetch_california_housing()
@@ -10,7 +11,13 @@ x = datasets.data
 y = datasets.target
 
 x_train, x_test, y_train, y_test = train_test_split(
-    x, y, train_size= 0.8, shuffle = True, random_state=123)
+    x, y, train_size= 0.8, shuffle = True, random_state=123,
+    stratify=y)
+scaler = MinMaxScaler()
+scaler.fit(x_train)
+x_train = scaler.tranform(x_train)
+x_test = scaler.transform(x_test)
+
   
 
 #2. 모델구성
@@ -57,3 +64,9 @@ print(y_predict.shape)
 # plt.title('califonia practice')
 # plt.legend(loc = 'upper right')
 # plt.show()
+
+
+"""
+loss :  [1.330081820487976, 0.9093935489654541]
+
+"""
