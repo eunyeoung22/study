@@ -103,11 +103,10 @@ model.add(Conv2D(10, (3,3), input_shape=(9,6,1), activation= 'relu'))
 model.add(Conv2D(100, (2,2), activation= 'relu'))
 model.add(Flatten())
 model.add(Dense(10, activation='linear', input_shape = (54,)))
-model.add(Dropout(0.2))
+model.add(Dropout(0.5))
 model.add(Dense(100, activation='linear'))
 model.add(Dense(100, activation='linear'))
 model.add(Dense(100, activation='linear'))
-model.add(Dropout(0.2))
 model.add(Dense(100, activation='linear'))
 model.add(Dense(100, activation='linear'))
 model.add(Dense(100, activation='linear'))
@@ -118,7 +117,7 @@ model.add(Dense(7, activation='softmax'))
 # # Total params: 57,557
 # # Trainable params: 57,557
 # # Non-trainable params: 0
-
+  
 # # 2. 모델 구성(함수형)
 # input1 = Input(shape=(54,))
 # dence1 = Dense(10, activation= 'linear')(input1)
@@ -142,7 +141,7 @@ model.compile(loss = 'categorical_crossentropy', optimizer='adam',
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 es = EarlyStopping(monitor= 'val_accuracy',
                               mode='max',
-                              patience=100,
+                              patience=50,
                               verbose=2)
 import datetime
 date = datetime.datetime.now()
@@ -159,7 +158,7 @@ mcp = ModelCheckpoint(monitor='val_loss', mode='auto', verbose=1,
                       save_best_only=True, #가장 좋은 지점을 저장
                       filepath= filepath +'k31_10_'+ '_' + date + '_' + filename) #파일 저장 경로 지정                
                     #   filepath= path +'MCP/keras30_ModelCheckPoint13.hdf5') #파일 저장 경로 지정
-model.fit(x_train, y_train, epochs=100, batch_size=32,
+model.fit(x_train, y_train, epochs=50, batch_size=32,
           callbacks=[es, mcp],validation_split=0.2, verbose=1)
 
 #4. 평가, 예측
@@ -182,6 +181,12 @@ loss:  0.3516520857810974
 accuracy :  0.8591258525848389
 [2 1 1 ... 0 1 1]
 0.8591258401246096
+
+loss:  0.671582043170929
+accuracy :  0.7068578004837036
+[2 1 1 ... 1 1 1]
+0.7068578263900244
+
 """
 
 
