@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn.datasets import fetch_covtype
 from tensorflow.keras.models import Sequential, Model
-from tensorflow.keras.layers import Dense, Input, Dropout
+from tensorflow.keras.layers import Dense, Input, Dropout,Conv2D,Flatten
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import StandardScaler
@@ -87,6 +87,11 @@ x_train = scaler.transform(x_train)
 # x_train = scaler.fit_transform(x_train)
 x_test = scaler.transform(x_test)
 
+print(x_train.shape, x_test.shape)#(464809, 54) (116203, 54)
+
+x_train = x_train.reshape(464809,9,6,1)
+x_test = x_test.reshape(116203,9,6,1)
+
 # print(x)
 # print(type(x)) #<class 'numpy.ndarray'>
 # print('최소값 : ', np.min(x))
@@ -94,6 +99,9 @@ x_test = scaler.transform(x_test)
 
 #2. 모델 구성(순차형)
 model = Sequential()
+model.add(Conv2D(10, (3,3), input_shape=(9,6,1), activation= 'relu'))
+model.add(Conv2D(100, (2,2), activation= 'relu'))
+model.add(Flatten())
 model.add(Dense(10, activation='linear', input_shape = (54,)))
 model.add(Dropout(0.2))
 model.add(Dense(100, activation='linear'))
