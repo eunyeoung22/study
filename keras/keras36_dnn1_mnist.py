@@ -42,7 +42,7 @@ model.compile(loss ='sparse_categorical_crossentropy', optimizer='adam',
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 es = EarlyStopping(monitor='val_loss',
                    mode='min',
-                   patience=100,
+                   patience=20,
                    verbose=1)
 # import datetime
 # date = datetime.datetime.now()
@@ -66,4 +66,7 @@ results = model.evaluate(x_test, y_test)
 print('loss : ', results[0])
 print('acc : ', results[1])
 
+"""
+loss :  0.12990501523017883
+acc :  0.974399983882904
 """
