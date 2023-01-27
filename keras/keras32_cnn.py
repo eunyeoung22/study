@@ -8,6 +8,8 @@ model.add(Conv2D(filters=10, kernel_size=(2,2),#kernel_size : 조각내는 기�
           #(batch_size, rows, colums, channels)
 model.add(Conv2D(filters=5, kernel_size=(2,2))) #(3,3,5) = (N,3,3,5)
 #model.add(Conv2D(5,(2,2)))
+model.add(Conv2D(7,(2,2)))
+model.add(Conv2D(6,2))
 model.add(Flatten())#dence 형식으로 바꾸기(행렬) #(45,) = (N,45)
 model.add(Dense(units=10))
 model.add(Dense(units=10))
