@@ -27,7 +27,6 @@ model = Sequential()
 # model.add(SimpleRNN(units = 10, input_shape =(3,1), activation= 'relu')) #순차적으로 연산하기 때문에 Flatten안해줘도 된다.
                                             #(N , 3, 1) -> ([batch, timestemps, feature]
 model.add(LSTM(units=10, input_shape =(3,1))) 
-
 model.add(Dense(5, activation= 'relu'))
 model.add(Dense(1))
 
