@@ -1,13 +1,14 @@
 import numpy as np
 import pandas as pd
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 
 
 #1.데이터
 path = './_data/jusic/' #데이터 위치가 현재 작성파일과 동일한 위치에 있을때(현재위치)
 sam = pd.read_csv(path + 'samsung.csv', encoding = 'euc-kr', header=0, index_col=0, 
-                 nrows= 1167, usecols=[0,1,2,3,4,8])
+                 nrows= 1166, usecols=[0,1,2,3,4,8])
 amor = pd.read_csv(path + 'amore.csv', encoding = 'euc-kr', index_col=0,
-                  nrows= 1903, usecols=[0,1,2,3,4,8], header=0)
+                  nrows= 1166, usecols=[0,1,2,3,4,8], header=0)
 # ecoding : csv 파일 내 한글이 포함되어 있어 인코딩 필요(eocoding = 'cp949' 또는 'euc-kr')
 # header : 컬럼의 이름을 확인하기 위해 상단 "0" 헤더 지정을 위해
 # index_col : 해당 컬럼을 인덱스로 지정하여 컬럼개수에 포함되지 않음
@@ -49,17 +50,20 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Dense, Input
 
 x1_train, x1_test, y_train, y_test = train_test_split(
-   sam[:1166], sam_open, train_size=0.7, shuffle=True, random_state=123
+   sam[:1165], sam_open, train_size=0.7, shuffle=True, random_state=123
 )
+
+x1_train = x1_train.to_numpy()
+x1_test = x1_test.to_numpy()
+
 x2_train, x2_test = train_test_split(
-   amor[:1166], train_size=0.7, shuffle=True, random_state=123
+   amor[:1165], train_size=0.7, shuffle=True, random_state=123
 )
 
 print(x1_train.shape, x1_test.shape)#(815, 5) (350, 5)
 print(x2_train.shape, x2_test.shape)#(815, 5) (350, 5)
 
-x1_train = x1_train.to_numpy()
-x1_test = x1_test.to_numpy()
+
 
 # #2. 모델구성
 
@@ -97,7 +101,14 @@ model.summary()
 
 # #3. 컴파일, 훈련
 model.compile(loss = 'mse', optimizer='adam')
-model.fit([x1_train, x2_train], y_train, epochs=100, batch_size = 32)
+es = EarlyStopping(monitor='val_loss', mode='min', patience=70, restore_best_weights=True, verbose=1)
+
+filepath = './_save/MCP/'
+mcp = ModelCheckpoint(monitor='val_loss', mode='auto', verbose=1,
+                      save_best_only=True, 
+                      filepath='./_save/MCP/sam_open_MCP.hdf5') #파일 저장 경로 지정  
+model.fit([x1_train, x2_train], y_train, epochs=100, 
+           callbacks=[es, mcp], batch_size = 32)
 
 # #4. 평가, 예측
 loss = model.evaluate([x1_test, x2_test], y_test)
@@ -106,3 +117,6 @@ print(loss)
 result = model.predict([sam[1165:].to_numpy(),amor[1165:]])
 print("samsung 시가 : ", result)
 
+"""
+samsung 시가 :  [[61803.645]]
+"""
