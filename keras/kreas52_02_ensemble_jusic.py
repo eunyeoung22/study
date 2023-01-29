@@ -102,21 +102,20 @@ model.summary()
 # #3. 컴파일, 훈련
 model.compile(loss = 'mse', optimizer='adam')
 es = EarlyStopping(monitor='val_loss', mode='min', patience=70, restore_best_weights=True, verbose=1)
-
-filepath = './_save/MCP/'
 mcp = ModelCheckpoint(monitor='val_loss', mode='auto', verbose=1,
                       save_best_only=True, 
                       filepath='./_save/MCP/sam_open_MCP.hdf5') #파일 저장 경로 지정  
-model.fit([x1_train, x2_train], y_train, epochs=100, 
+model.fit([x1_train, x2_train], y_train, epochs=100, validation_split=0.2,
            callbacks=[es, mcp], batch_size = 32)
 
 # #4. 평가, 예측
 loss = model.evaluate([x1_test, x2_test], y_test)
 print(loss)
 
-result = model.predict([sam[1165:].to_numpy(),amor[1165:]])
+result = model.predict([sam[1165:].to_numpy(),amor[1165:]]) # train data type 과predict data type 맞추기
 print("samsung 시가 : ", result)
 
 """
 samsung 시가 :  [[61803.645]]
+samsung 시가 :  [[61597.89]]
 """
