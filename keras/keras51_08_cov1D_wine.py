@@ -108,5 +108,10 @@ accuracy :  1.0
 LSTM적용
 loss:  0.023019473999738693
 accuracy :  1.0
+
+conv1D
+loss :  0.17966678738594055
+accuracy :  0.9824561476707458
+accuracy_score :  0.9122807017543859
 """
 
