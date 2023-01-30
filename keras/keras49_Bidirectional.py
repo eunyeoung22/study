@@ -54,7 +54,6 @@ model.add(Dense(50, activation= 'linear'))
 model.add(Dense(30, activation= 'linear'))
 model.add(Dense(20, activation= 'linear'))
 model.add(Dense(1, activation= 'linear'))
-
 model.summary()
 
 #3. 컴파일, 훈련
