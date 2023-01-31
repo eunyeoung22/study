@@ -22,7 +22,7 @@ test_datagen = ImageDataGenerator(
 xy_train = train_datagen.flow_from_directory(
     './_data/brain/train/',
     target_size=(100,100),# 전체 이미지를 동일하게 (200,200)으로 맞춘다(이미지 사이즈들이 모두 같을 수 없기 때문)
-    batch_size=1000,
+    batch_size=1000,#전체 사이즈를 알수 없을때 큰값을 작성하면 한배치에 모든 데이터를 넣을 수 있음
     class_mode='binary',# 수치화
     color_mode='grayscale',
     shuffle=True # 0,1를 적당히 섞여서 테스트 하기 위해 'True'사용
@@ -38,6 +38,9 @@ xy_test = test_datagen.flow_from_directory(
     # Found 120 images belonging to 2 classes.
     )
 
+print(xy_train.image_shape)#(100, 100, 1)
+print(xy_test.image_shape)#(100, 100, 1)
+
 #2. 모델 구성
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Conv2D, Flatten,LSTM,MaxPooling2D
@@ -48,19 +51,22 @@ model.add(Conv2D(100,(3,3), activation='relu'))
 model.add(Conv2D(100,(3,3), activation='relu'))
 model.add(MaxPooling2D())
 model.add(Flatten())
-model.add(Dense(50, activation='relu'))
-model.add(Dense(80, activation='relu'))
+model.add(Dense(100, activation='linear'))
+model.add(Dense(100, activation='linear'))
+model.add(Dense(100, activation='linear'))
+model.add(Dense(100, activation='linear'))
 model.add(Dense(100, activation='relu'))
-model.add(Dense(80, activation='relu'))
-model.add(Dense(50, activation='relu'))
+model.add(Dense(100, activation='relu'))
+model.add(Dense(100, activation='relu'))
 model.add(Dense(50, activation='relu'))
 model.add(Dense(1, activation='sigmoid'))#0,1로만 구성되어 있는 이진분류로 마지막엔 sigmoid 또는 softmax 사용
 
 #3. 컴파일, 훈련(배치사이즈 넣기)
 model.compile(loss ='binary_crossentropy', optimizer='adam', metrics=['acc'])
-hist = model.fit(xy_train[0][0], xy_train[0][1],#steps_per_epoch=16, 
-                epochs=50,
-                validation_data=(xy_test[0][0], xy_test[0][1]),#validation_data : 검증데이터셋을 제공할 제네레이터를 지정
+hist = model.fit(xy_train[0][0], xy_train[0][1],
+                 batch_size =16,#steps_per_epoch=16, 
+                 epochs=50,
+                 validation_data=(xy_test[0][0], xy_test[0][1]),#validation_data : 검증데이터셋을 제공할 제네레이터를 지정
                 # validation_steps=4)#validation_steps : epoch 종료 시 마다 검증할 때 사용되는 검증 스텝 수를 지정
 )
 accuracy = hist.history['acc']
@@ -74,9 +80,28 @@ print('accuracy: ', accuracy[-1])
 print('val_acc: ', val_acc[-1])
 
 import matplotlib.pyplot as plt
-plt.imshow(xy_train[1][0][1], 'gray') #Tuple(한덩어리 안에 [xy가 같이 존재][x인지 y인지 구분][batch_size만큼의 x,y각각 존재])
+plt.imshow(xy_train[0][0][159], 'gray') #Tuple(한덩어리 안에 [xy가 같이 존재][x인지 y인지 구분][batch_size만큼의 x,y각각 존재])
 plt.show()
 
+# import matplotlib.pyplot as plt
+# plt.figure(figsize=(9,6)) #그래프 사이즈
+# plt.plot(hist.history['loss'], c = 'red', marker = '.', 
+#         label='loss') # c : 그래프 선 color / label : 그래프 선 이 름
+# plt.plot(hist.history['val_loss'], c = 'blue', marker = '.', 
+#         label = 'val loss')
+# plt.plot(hist.history['acc'], c = 'orange', marker = '.', 
+#         label = 'acc')
+# plt.plot(hist.history['val_acc'], c = 'green', marker = '.', 
+#         label = 'val_acc')
+
+# plt.grid() #격자
+# plt.xlabel('epochs') #x축
+# plt.ylabel('loss') #y축
+# plt.title('fit_generator') # 그래프 타이틀
+# plt.legend() # 범례(알아서 빈곳에 현출)
+# # plt.legend(loc='upper right') #범례(그래프 오른쪽)
+# # plt.legend(loc='upper left') #범례(그래프 왼쪽)
+# plt.show() # 그래프 보여줘
 
 """
 loss:  0.00017916594515554607
@@ -84,11 +109,15 @@ val_loss:  1.2281023263931274
 accuracy:  1.0
 val_acc:  0.6416666507720947
 
-
 loss:  5.169044925423805e-06
 val_loss:  1.9013832807540894
 accuracy:  1.0
 val_acc:  0.7333333492279053
+
+loss:  9.484703696216457e-06
+val_loss:  1.7056835889816284
+accuracy:  1.0
+val_acc:  0.7583333253860474
 """
 #4. 평가, 예측
 
