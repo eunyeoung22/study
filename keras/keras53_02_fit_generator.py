@@ -54,9 +54,11 @@ model.add(Dense(100, activation='relu'))
 model.add(Dense(100, activation='linear'))
 model.add(Dense(50, activation='linear'))
 model.add(Dense(1, activation='sigmoid'))#0,1로만 구성되어 있는 이진분류로 마지막엔 sigmoid 또는 softmax 사용
-
+# model.add(Dense(2, activation='softmax'))
 #3. 컴파일, 훈련
 model.compile(loss ='binary_crossentropy', optimizer='adam', metrics=['acc'])
+# model.compile(loss ='sparse_crossentropy', optimizer='adam', metrics=['acc'])
+              
 hist = model.fit_generator(xy_train, steps_per_epoch=10, epochs=300,
                     validation_data=xy_test,#validation_data : 검증데이터셋을 제공할 제네레이터를 지정
                     validation_steps=5)#validation_steps : epoch 종료 시 마다 검증할 때 사용되는 검증 스텝 수를 지정
@@ -70,8 +72,6 @@ print('loss: ', loss[-1])
 print('val_loss: ', val_loss[-1])
 print('accuracy: ', accuracy[-1])
 print('val_acc: ', val_acc[-1])
-
-
 
 import matplotlib.pyplot as plt
 plt.imshow(xy_train[3][0][9], 'gray') #Tuple(한덩어리 안에 [xy가 같이 존재][x인지 y인지 구분][batch_size만큼의 x,y각각 존재])
