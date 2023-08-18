@@ -14,6 +14,7 @@ console.log(user);
 //2.await
 
 function delay(ms) {
+    //ms:밀리 세컨즈
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 async function getApple() {
@@ -32,3 +33,28 @@ async function pickFruits() {
     return `${apple} + ${banana}`;
 }
 pickFruits().then(console.log);
+
+function popup() {
+    window.open("https://www.google.com", "팝업", "width=500, height=300");
+    window.scrollTo(100, 200);
+}
+
+function popClose() {
+    window.close("popup.html");
+}
+
+const obj = { name: "철수" };
+console.log("1:", obj);
+
+const obj1 = {};
+obj1.name = "철수";
+console.log("2:", obj1.name);
+
+const obj2 = { name: "영희" };
+obj2.name = "철수";
+console.log("3:", obj2.name);
+
+const obj3 = {};
+const obj4 = obj3;
+obj4.name = "철수";
+console.log("4:", obj4.name);
